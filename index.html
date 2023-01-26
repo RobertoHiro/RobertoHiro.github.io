@@ -13,8 +13,6 @@
         <img id="card1" src="IMG_20230126_105442_995.jpg" />
         <a-asset-item id="avatarModel1" src="Cachorro brincalhão.glb"></a-asset-item>
       </a-assets>
-
-      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
       <a-entity mindar-image-target="targetIndex: 1">
         <a-plane src="#card1" position="0 0 0" height="0.552" width="1" rotation="0 0 0"></a-plane>
         <a-gltf-model rotation="0 90 -90 " position="0 0 0.1" scale="0.5 0.5 0.5" src="#avatarModel1"></a-gltf-model>
@@ -26,12 +24,12 @@
         <img id="card2" src="IMG_20230126_115323_451.jpg" />
         <a-asset-item id="avatarModel2" src="Cachorro brincalhão.glb"></a-asset-item>
       </a-assets> 
-
-      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
       <a-entity mindar-image-target="targetIndex: 0">
         <a-plane src="#card2" position="0 0 0" height="0.552" width="1" rotation="0 0 0"></a-plane>
         <a-gltf-model rotation="0 90 -90 " position="0 0 0.1" scale="0.5 0.5 0.5" src="#avatarModel2"></a-gltf-model>
       </a-entity> 
+
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
     </a-scene>
   </body>
