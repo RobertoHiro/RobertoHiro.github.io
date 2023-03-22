@@ -1,0 +1,42 @@
+.ipt-group, .ipt-group-btn-center, .ipt-group-msg{
+    padding: 7px 5px;
+}
+
+.ipt-group-btn-center{
+    text-align: center;
+}
+
+.ipt-group-btn-right{
+    text-align: right;   
+}
+
+.ipt-group label{
+    font-weight: 600;
+}
+
+.ipt-group span{
+    color: #f00;
+    font-weight: bold;
+    margin-left: 5px;
+    display: none;
+}
+
+.ipt-group-msg{
+    min-height: 70px;
+}
+
+.ipt-group-msg .alert{
+    display: none;
+    padding: 5px 15px !important
+}
+
+button:disabled{
+    border: 1px solid #c9c9c9 !important;
+    background: #f9f9f9 !important;
+    font-weight: normal !important;
+    cursor: default !important;
+}
+
+.form-control[readonly]{
+    background-color: #fff !important;
+}

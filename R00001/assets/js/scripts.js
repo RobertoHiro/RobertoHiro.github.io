@@ -26,7 +26,7 @@ $(function () {
                 $(this.element).append('<div class="row"> <div class="col-12 ipt-group" style="margin-left: 150px"> <label>Tipo</label> '+
                         '<select id="select" class="chzn-select" style="display: inline-block;">'+
                         '</select> <div style="display: inline-block;"><label style="display: inline-block;">Data </label> <input type="text" class="form-control calendar ' +
-                        'ipt-start" readonly="readonly" style="display: inline-block; width: 165px"></div> <button class="ui-button ui-widget ui-corner-all btn-report" style="margin-top: -6px; ' +
+                        'ipt-start" readonly="readonly" style="display: inline-block; width: 165px"> <input type="text" class="form-control" id="func"/></div> <button class="ui-button ui-widget ui-corner-all btn-report" style="margin-top: -6px; ' +
                         'height: 38px" disabled> <i class="fas fa-chart-line"></i> Gerar Relatório </button> </div></div><div class="row"> <div class="col-12 ipt-group content-data" ' +
                         'style="max-height: 550px"> <div class="fa-3x loading" style="text-align: center; display: none"> <i class="fas fa-sync fa-spin" style="color: rgb(0 123 255 / 50%);"></i>' +
                         '</div><div class="preview"></div></div></div>');
@@ -40,6 +40,8 @@ $(function () {
 
                 let start = $('#' + ID + ' .ipt-start');
                 let select = $("#select");
+
+                let func = $("#func");
                 
                 let report = $('#' + ID + ' .btn-report');
                 let preview = $('#' + ID + ' .content-data .preview');
@@ -48,109 +50,11 @@ $(function () {
                 
                 let arrayObjValueOnGraphics = [
                     {
-                        x:'responsavel_label',
-                        y:'valorTotalComissao',
-                        description:'Relatório de Responsavel/Total comissão',
+                        x:'vendedor',
+                        y:'valorTotal',
+                        description:'Relatorio de vendedor/Total valor vendido',
                         drilldown:null
-                    },
-                    {
-                        x:'responsavel_label',
-                        y:'valorTotalTrabalhado',
-                        description:'Relatório de Responsavel/Total trabalho',
-                        drilldown:null
-                    },
-                    {
-                        x:'cliente_label',
-                        y:'valorTotalTrabalhado',
-                        description:'Relatório de Cliente/Total trabalho',
-                        drilldown:null
-                    },
-                    {
-                        x:'tipo de renda [Fixa/Variável]',
-                        y:'valorTotalComissao',
-                        description:'Renda fixa/variável da comissão',
-                        drilldown:{
-                            reference:'responsavel',
-                            fields:[
-                                {label:'valorTotalComissao',drilldown:{}},
-                                {label:'valorTotalTrabalhado',drilldown:{}}
-                            ]}
-                    },
-                    {
-                        x:'tipo de renda [Fixa/Variável]',
-                        y:'valorTotalTrabalhado',
-                        description:'Renda fixa/variável do trabalho',
-                        drilldown:{
-                            reference:'responsavel',
-                            fields:[
-                                {label:'valorTotalComissao',drilldown:{}},
-                                {label:'valorTotalTrabalhado',drilldown:{}}
-                            ]}
-                    },
-                    {
-                        x:'responsavel_label',
-                        y:'valorTotalTrabalhado',
-                        description:'grafico de teste',
-                        drilldown:{
-                            reference:'responsavel',
-                            fields:[
-                                {
-                                    x:'responsavel_label',
-                                    y:'valorTotalComissao',
-                                    description:'grafico de drill',
-                                    drilldown:{
-                                        reference:'responsavel',
-                                        fields:[
-                                        {
-                                            x:'responsavel_label',
-                                            y:'valorTotalComissao',
-                                            description:'grafico de drill 2',
-                                            drilldown:[]
-                                        }
-                                        ]
-                                    }
-                                },
-                                {
-                                    x:'cliente_label',
-                                    y:'valorTotalTrabalhado',
-                                    description:'grafico de drill',
-                                    drilldown:[]
-                                }
-                            ]
-                        },
-                    },
-                    {
-                        x:'responsavel_label',
-                        y:'valorTotalTrabalhado',
-                        description:'grafico de teste dinamico',
-                        drilldown:{
-                            reference:'responsavel',
-                            fields:[
-                                {
-                                    x:'responsavel_label',
-                                    y:'valorTotalComissao',
-                                    description:'teste dinamico drill',
-                                    drilldown:{}
-                                },
-                                {
-                                    x:'cliente_label',
-                                    y:'valorTotalTrabalhado',
-                                    description:'teste dinamico drill cliente',
-                                    drilldown:{
-                                        reference:'cliente',
-                                        fields:[
-                                            {
-                                                x:'cliente_label',
-                                                y:'valorTotalTrabalhado',
-                                                description:'teste dinamico drill',
-                                                drilldown:{}
-                                            }
-                                        ]
-                                    }
-                                }
-                            ]
-                        }
-                    },
+                    }
                 ];
 
                 for (let i = 0; i < arrayObjValueOnGraphics.length; i++) {
@@ -179,26 +83,23 @@ $(function () {
 
                     setTimeout(() => {
                         let date = $(start).val().split('/');
-                        let startSelected = date[2] + '-' + date[1] + '-' + date[0] + 'T00:00:00';
+                        let employee = $(func).val();
+                        let startSelected = date[2] + '-' + date[1] + '-' + date[0];
                         let endSelected = selectedOption;
-                        let options = {
-                            filters: [
-                                startSelected, endSelected
-                            ]
-                        };
+                        console.log(startSelected);
+                        let options = [{"fieldName": "data.slt_00001", "expression": "EQUAL", "value": startSelected},{"fieldName": "data.slt_00002", "expression": "EQUAL", "value": employee}];
 
                         let data = _loadStuffData('r-yza-spcxa-01_view', options);
 
                         let arrayObjValueOnGraphicsSelected = arrayObjValueOnGraphics[selectedOption];
-
-                        preview.append('<canvas class="my-chart"></canvas>');
+                        preview.append('<canvas class="my-chart"></canvas><canvas class="d-chart"></canvas><canvas class="cn-chart"></canvas>')
+                        preview.append('<div class="row chart_table"><table class="table" id="sellsTable"></table></div>')
                         let result = $self._agregation(data, arrayObjValueOnGraphicsSelected.x, arrayObjValueOnGraphicsSelected.y, $self);
                         let descricao = arrayObjValueOnGraphicsSelected.description;
-                        if (arrayObjValueOnGraphicsSelected.drilldown!=null){
-                            drilldown._generateChartDrill(descricao, result, '.my-chart', arrayObjValueOnGraphicsSelected.drilldown, preview, ID, $self);
-                        }else{
-                            $self._generateChartBar(descricao, result, '.my-chart');
-                        }
+                        $self._generateChartBar(descricao, data, '.my-chart');
+                        $self._generateChartBar2("total/produto",data,'.d-chart');
+                        $self._generateChartBar3("vendedor/qtd clientes", data, '.cn-chart');
+                        $self._generateTable(data,"sellsTable",options);
                         loading.hide();
                     }, 500);
 
@@ -307,18 +208,27 @@ $(function () {
             const ID = $(this.element).attr('id');
             let $self = this;
 
-            if (ID && data && data.size > 0) {
+            
+            if (ID && data) {
                 let rgbs = [];
                 let _labels = [];
                 let _values = [];
                 
-                //console.log('description: '+description);
+                console.log('description: '+description);
                 //console.log(data);
-
-                for (let item of data.entries()) {
+                let map = new Map();
+                for(let item of data){
+                    if(map.has(item["vendedor"]["label"])){
+                        map.set(item["vendedor"]["label"], map.get(item["vendedor"]["label"]) + item["valor"]);
+                    }else{
+                        map.set(item["vendedor"]["label"],item["valor"]);
+                    }
+                }
+                console.log(map.values());
+                for (let [key, value] of map.entries()) {
                     rgbs.push($self._generateRGB());
-                    _labels.push(item[0]);
-                    _values.push(item[1]);
+                    _labels.push(key);
+                    _values.push(value);
                 }
 
                 let _backgrounds = rgbs.map((item) => $self._rgbaToString(item, 0.2));
@@ -349,14 +259,215 @@ $(function () {
             }
         },
 
+        _generateChartBar2: function (description, data, classMyChart) {
+            const ID = $(this.element).attr('id');
+            let $self = this;
+
+            
+            if (ID && data) {
+                let rgbs = [];
+                let _labels = [];
+                let _values = [];
+                
+                console.log('description: '+description);
+                //console.log(data);
+                let map = new Map();
+                for(let item of data){
+                    if(map.has(item["produto"]["label"])){
+                        map.set(item["produto"]["label"], map.get(item["produto"]["label"]) + item["valor"]);
+                    }else{
+                        map.set(item["produto"]["label"],item["valor"]);
+                    }
+                }
+                let total = 0;
+                for(let item of data){
+                    total += item["valor"];
+                }
+
+                for(let item of map.entries()){
+                    map.set(item[0],((map.get(item[0])/total)*100).toFixed(2));
+                }
+
+                console.log(map.values());
+                for (let [key, value] of map.entries()) {
+                    rgbs.push($self._generateRGB());
+                    _labels.push(key);
+                    _values.push(value);
+                }
+
+                let _backgrounds = rgbs.map((item) => $self._rgbaToString(item, 0.2));
+                let _borders = rgbs.map((item) => $self._rgbaToString(item, 1));
+
+                //console.log(ID);
+                let ctx = $('#' + ID + ' .content-data '+classMyChart);
+                var myChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: _labels,
+                        datasets: [{
+                                label: description,
+                                data: _values,
+                                backgroundColor: _backgrounds,
+                                borderColor: _borders,
+                                borderWidth: 1
+                            }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                              labels: {
+                                generateLabels: (chart) => {
+                                  const datasets = chart.data.datasets;
+                                  return datasets[0].data.map((data, i) => ({
+                                    text: `${chart.data.labels[i]} ${data}%`,
+                                    fillStyle: datasets[0].backgroundColor[i],
+                                    index: i
+                                  }))
+                                }
+                              }
+                            }
+                        }
+                    }
+                });
+            }
+        },
+
+        _generateChartBar3: function (description, data, classMyChart) {
+            const ID = $(this.element).attr('id');
+            let $self = this;
+
+            
+            if (ID && data) {
+                let rgbs = [];
+                let _labels = [];
+                let _values = [];
+                
+                console.log('description: '+description);
+                //console.log(data);
+                let map = new Map();
+                let set = new Set();
+                for(let item of data){
+                    set.add(item["vendedor"]["label"]+"/"+item["cliente"]["label"]);
+                }
+                for(let item of set){
+                    if(map.has(item.split("/")[0])){
+                        map.set(item.split("/")[0], map.get(item.split("/")[0]) + 1);
+                    }else{
+                        map.set(item.split("/")[0],1);
+                    }
+                }
+
+                console.log(map.values());
+                for (let [key, value] of map.entries()) {
+                    rgbs.push($self._generateRGB());
+                    _labels.push(key);
+                    _values.push(value);
+                }
+
+                let _backgrounds = rgbs.map((item) => $self._rgbaToString(item, 0.2));
+                let _borders = rgbs.map((item) => $self._rgbaToString(item, 1));
+
+                //console.log(ID);
+                let ctx = $('#' + ID + ' .content-data '+classMyChart);
+                var myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: _labels,
+                        datasets: [{
+                                label: description,
+                                data: _values,
+                                backgroundColor: _backgrounds,
+                                borderColor: _borders,
+                                borderWidth: 1
+                            }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        },
+                    }
+                });
+            }
+        },
+
+        _generateTable : (data, idTablef,options) =>{
+            $(`#${idTablef}`).append("<tr><th>Vendedor</th>  <th>Cliente</th> <th> Produto</th> <th>Quantidade</th> <th> Valor</th></tr>");
+            let i = 0;
+            page = 10;
+            for (const item of data) {
+                if(i <= page){
+                    $(`#${idTablef}`).append(
+                        `
+                            <tr>
+                                <td>${item.vendedor.label}</td>
+                                <td>${item.cliente.label}</td>
+                                <td>${item.produto.label}</td>
+                                <td>${item.quantia}</td>
+                                <td>${item.valor}</td>
+                            </tr>
+                        `
+                    );
+                    i++;
+                }
+                
+            }
+            $(`#sellsTable`).append(
+                ` <tr><td colspan="5" class="table-button">
+                    <button id = "getNewLines">Mostrar mais</button>
+                </td></tr>`
+            );
+        
+            $(`#getNewLines`).click(()=>getNewLinesForTable(1,options[0].value,options[1].value));
+        },
+
         _destroy: function () {
             $(this.element).empty();
         }
     });
-
+    
+    
 });
 
+function getNewLinesForTable(page,filter1,filter2){
+    let previousPage = page;
+    page = 10 + (page*5);
+    let i = 0;
+    let options = [{"fieldName": "data.slt_00001", "expression": "EQUAL", "value": filter1},{"fieldName": "data.slt_00002", "expression": "EQUAL", "value": filter2}];
+    let data = _loadStuffData('r-yza-spcxa-01_view', options);
+    $("#getNewLines").parent().parent().detach();
+    for(const item of data){
+        if(i<=page && i>= (page-5)){
+            $("#sellsTable").append(
+                `
+                    <tr>
+                        <td>${item.vendedor.label}</td>
+                        <td>${item.cliente.label}</td>
+                        <td>${item.produto.label}</td>
+                        <td>${item.quantia}</td>
+                        <td>${item.valor}</td>
+                    </tr>
+                `
+            );
+        }
+        i++;
+    }
+    $(`#sellsTable`).append(
+        `<tr> 
+        <td colspan="5" class="table-button">
+            <button id = "getNewLines">Mostrar mais</button>
+        </td>
+        </tr>`
+    );
 
+    $(`#getNewLines`).click(()=>getNewLinesForTable(previousPage + 1,filter1,filter2));
+}
 
 function _loadStuffData (stuffCode, options) {
     let $self = this;
@@ -386,7 +497,7 @@ function _loadStuffData (stuffCode, options) {
             break;
     }
 
-    if(localData!=null){
+    if(false){
         console.log(localData);
         return localData;
     }
@@ -395,19 +506,35 @@ function _loadStuffData (stuffCode, options) {
         console.log("data from jarvis");
 
         //let token = getToken();
-        response = requestjarvis('a-car-renda-01',options);
+        response = requestjarvis('p-con-venda-01',options);
 
-        console.log('response:',response);
+        console.log('options:',options);
         if (response && Array.isArray(response) && response.length > 0) {
             response.forEach((value) => {
-                data.push({
-                    responsavel: value.data.slt_00003,
-                    responsavel_label: value.data.slt_00003_label,
-                    valorTotalComissao: value.data.ipt_00038,
-                    valorTotalTrabalhado: value.data.ipt_00014,
-                    cliente: value.data.slt_00002,
-                    cliente_label: value.data.slt_00002_label
-                });
+                console.log(options[1].value);
+                if(value.data.slt_00001.split('T')[0] == options[0].value){
+                    if(options[1].value){
+                        if(options[1].value == value.data.slt_00002.label){
+                            data.push({
+                                data: value.data.slt_00001,
+                                vendedor: value.data.slt_00002,
+                                produto: value.data.slt_00003,
+                                cliente: value.data.slt_00004,
+                                quantia: value.data.ipt_00005,
+                                valor: value.data.ipt_00006
+                            });
+                        }
+                    }else{
+                        data.push({
+                            data: value.data.slt_00001,
+                            vendedor: value.data.slt_00002,
+                            produto: value.data.slt_00003,
+                            cliente: value.data.slt_00004,
+                            quantia: value.data.ipt_00005,
+                            valor: value.data.ipt_00006
+                        });
+                    }
+                }
             });
         }
         switch (localJsonType) {
@@ -520,10 +647,10 @@ function _loadStuffData (stuffCode, options) {
 
 function getToken(){
     $.ajax({
-        url: 'http://app.chutzy.com:8080/jarvis/oauth/token',
+        url: 'http://qas-abctech.ddns.net:8080/jarvis/oauth/token',
         data: {
-            "password":"27E8w0le",
-            "username":"DEV-QC33:for.admin",
+            "password":"39ob7i410w",
+            "username":"DEV-HQNS:sga.admin",
             "grant_type":"password"
         },
         type: 'POST',
@@ -557,17 +684,17 @@ function requestjarvis(stuffCode,filters)
     
     //console.log('headersLista: ', headersLista);
     let dataLista = JSON.stringify(options);
-    //console.log('dataLista: ',dataLista);
+    console.log('dataLista: ',dataLista);
     let toReturn;
     $.ajax({
-        url: 'http://app.chutzy.com:8080/jarvis/api/stuff/data/filter-entities',
+        url: 'http://qas-abctech.ddns.net:8080/jarvis/api/stuff/data/filter-entities',
         data: dataLista,
         type: 'POST',
         async: false,
         headers: headersLista,
         success:function(response){
-            //console.log(response);
-            toReturn = GetItemDetailFromItemList(response, filters);
+            console.log("resposta"+response);
+            toReturn = response;
         },
         error:function(e){
             console.log(e);
@@ -580,94 +707,6 @@ function requestjarvis(stuffCode,filters)
     //##request nova
     //#x= requests.post('http://app.chutzy.com:8080/jarvis/api/stuff/data/filter-entities',json=data,headers = headers)
 }
-
-function GetItemDetailFromItemList(response, filters){
-    let items = response;
-    //console.log('items: ',items);
-    filtertype = '';
-    value = 0;
-    lista = [];
-    //console.log(filters);
-    if(String(filters[1]).toLowerCase() == 'mes'){
-        value = str(filters[0]).split('-')[1];
-        filtertype = 'mes';
-    }
-    else{
-        value = String(filters[0]).split('-')[0];
-        filtertype = 'ano';
-    }
-    items.forEach(item => {
-        //console.log("item: ",item);
-        if(filtertype == 'mes'){
-            if(str(item['data']['slt_00001']).split('-')[1] == value){
-                y = getDetails(stuffCode, item['id']);
-                //console.log(y);
-                lista.push(y);
-            }
-        }
-        else(String(item['data']['slt_00001']).split('-')[0] == value);{
-            y = getDetails(stuffCode, item['id']);
-            lista.push(y);
-        }
-    });
-    //console.log('lista: ',lista);
-    return lista;
-}
-
-function getDetails(stuffCode, stuffId){
-    //let token = requestToken().json()['access_token'];
-    let headers= {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-stuff-code': stuffCode,
-        'Authorization': 'Bearer '+token
-    };
-    //x = requests.get('http://app.chutzy.com:8080/jarvis/api/stuff/data/'+stuffId, headers = headers);
-    let jsonRequest;
-    $.ajax({
-        url: 'http://app.chutzy.com:8080/jarvis/api/stuff/data/'+stuffId,
-        type: 'GET',
-        async: false,
-        headers: headers,
-        success:function(response){
-            console.log('response:',response);
-            //jsonRequest = x.json();
-            jsonRequest = response;
-            //console.log(jsonRequest['data']['slt_00002']);
-            jsonRequest['data']['slt_00003_label'] = jsonRequest['createdBy'];
-            y = getSltName(stuffCode, jsonRequest['data']['slt_00002']);
-            //console.log('y',y);
-            jsonRequest['data']['slt_00002_label'] = y['data']['ipt_00002'];
-        },
-        error:function(e){
-            console.log(e);
-        }
-    });
-    return jsonRequest;
-}
-
-function getSltName(stuffCode, stuffId){
-    //token = requestToken().json()['access_token']
-    headers= {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-stuff-code': 'c-inf-clien-01',
-        'Authorization': 'Bearer '+token
-    }
-    //y = requests.get('http://app.chutzy.com:8080/jarvis/api/stuff/data/'+stuffId, headers = headers);
-    var responseToReturn;
-    $.ajax({
-        url: 'http://app.chutzy.com:8080/jarvis/api/stuff/data/'+stuffId,
-        type: 'GET',
-        async: false,
-        headers: headers,
-        success:function(response){
-            responseToReturn = response;
-            //console.log('response:',responseToReturn);
-        },
-        error:function(e){
-            console.log('e',e);
-        }
-    });
-    return responseToReturn;
+const viewTable = (x)=>{
+    
 }

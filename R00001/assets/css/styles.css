@@ -40,3 +40,25 @@ button:disabled{
 .form-control[readonly]{
     background-color: #fff !important;
 }
+
+.charts{
+    width: 100%;
+    height: 30vh;
+    display: inline-block;    
+}
+
+#getNewLines{
+    width: 100%;
+    height: max-content;
+    border: 0;
+    background-color: transparent;
+}
+
+.table-button{
+    border: 1px solid #c9c9c9;
+    background-color: beige;
+}
+
+.chart_table{
+    display: flex;
+}
